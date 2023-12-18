@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SceneManager : MonoBehaviour
 {
@@ -45,16 +46,14 @@ public class SceneManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("초기화 시작");
         _init = true;
+
+        currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
         // 씬 트랜지션
         GameObject screenTransitionObject = Instantiate(Resources.Load<GameObject>("ScreenTransition"));
         SetCanvas(screenTransitionObject);
         screenTransition = screenTransitionObject.GetComponent<ScreenTransition>();
-        if (screenTransition != null)
-            Debug.Log("씬 트랜지션 발견");
-
         screenTransition.CircleSize = 1f;
         DontDestroyOnLoad(screenTransitionObject);
     }
@@ -90,6 +89,12 @@ public class SceneManager : MonoBehaviour
 
     public void LoadScene(string _sceneName)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetSceneByName(_sceneName) == null)
+        {
+            Debug.Log($"{_sceneName}씬 이름이 빌드 목록에 없습니다.");
+            return;
+        }
+
         if (!_isLoading && currentSceneName != _sceneName)
         {
             Debug.Log("씬 변경중...");
@@ -116,20 +121,23 @@ public class SceneManager : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-
-        Debug.Log("씬 변경 완료");
-
         StartCoroutine(screenTransition.CircleOutCo(1f, _callback: () => { _isLoading = false; }));
 
+        SetCanvas(screenTransition.gameObject);
+        GameObject go = GameObject.Find("EventSystem");
+        if (go == null)
+        {
+            go = new GameObject { name = "EventSystem" };
+            go.AddComponent<EventSystem>();
+        }
     }
 
     public void SetCanvas(GameObject _go)
     {
-        // GameObject go = GameObject.Find("EventSystem");
-        // if (go == null) SetEventSystem();
-
         Canvas canvas = _go.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = Camera.main;
+        canvas.planeDistance = 0.02f;
         canvas.overrideSorting = true;
 
         CanvasScaler cs = _go.GetComponent<CanvasScaler>();
