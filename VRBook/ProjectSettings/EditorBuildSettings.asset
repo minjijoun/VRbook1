@@ -11,6 +11,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TheLittlePrince.unity
     guid: 66057fc5c99176f45a33beed834914f9
+  - enabled: 1
+    path: Assets/Scenes/ABCD.unity
+    guid: af2a29e7589b9894f93a80eb3cc89816
+  - enabled: 1
+    path: Assets/Scenes/ShinSaimdang.unity
+    guid: 6a47ea2b7fb36de45b6623b3b663e68d
+  - enabled: 1
+    path: Assets/Scenes/poetry.unity
+    guid: a2766ddb964a6e64398ffb07e8dbde09
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 2c2df0d934c6b1a408154bdb3d0ff04d,
       type: 2}
